@@ -15,9 +15,7 @@ Built as the semester project for **CS 6083 — Principles of Database Systems**
 
 ## Try It Out
 
-> 🚀 **[Live Demo → coming soon](#)**
-
-Once deployed, use these credentials to explore without registering:
+> 🚀 **[Live Demo → snickr-production.up.railway.app](https://snickr-production.up.railway.app)**
 
 | Username | Password | Role |
 |---|---|---|
