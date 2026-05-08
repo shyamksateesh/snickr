@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ workspace.name }} — Snickr{% endblock %}
+{% block content %}
+<div class="ws-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-ws-name">{{ workspace.name }}</div>
+            {% if is_admin %}<span class="role-badge small">admin</span>{% endif %}
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-label">channels</div>
+            {% set public_channels = channels | selectattr("channel_type", "equalto", "public") | list %}
+            {% set private_channels = channels | selectattr("channel_type", "equalto", "private") | list %}
+            {% set direct_channels = channels | selectattr("channel_type", "equalto", "direct") | list %}
+
+            {% if public_channels %}
+            <div class="ch-group-label">public</div>
+            {% for ch in public_channels %}
+            <a href="{{ url_for('channel_detail', channel_id=ch.channel_id) }}" class="sidebar-ch {% if not ch.is_member %}muted{% endif %}">
+                <span class="ch-sigil">#</span>{{ ch.name }}
+            </a>
+            {% endfor %}
+            {% endif %}
+
+            {% if private_channels %}
+            <div class="ch-group-label">private</div>
+            {% for ch in private_channels %}
+            <a href="{{ url_for('channel_detail', channel_id=ch.channel_id) }}" class="sidebar-ch">
+                <span class="ch-sigil">🔒</span>{{ ch.name }}
+            </a>
+            {% endfor %}
+            {% endif %}
+
+            {% if direct_channels %}
+            <div class="ch-group-label">direct</div>
+            {% for ch in direct_channels %}
+            <a href="{{ url_for('channel_detail', channel_id=ch.channel_id) }}" class="sidebar-ch">
+                <span class="ch-sigil">@</span>{{ ch.name }}
+            </a>
+            {% endfor %}
+            {% endif %}
+        </nav>
+
+        <div class="sidebar-actions">
+            <a href="{{ url_for('create_channel', workspace_id=workspace.workspace_id) }}" class="sidebar-action-btn">+ new channel</a>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="ws-main">
+        <div class="ws-main-header">
+            <h2>{{ workspace.name }}</h2>
+            {% if workspace.description %}<p class="ws-desc">{{ workspace.description }}</p>{% endif %}
+        </div>
+
+        <div class="ws-panels">
+            <!-- Members panel -->
+            <div class="panel">
+                <div class="panel-title">members ({{ members | length }})</div>
+                <ul class="member-list">
+                    {% for m in members %}
+                    <li class="member-item">
+                        <span class="member-name">{{ m.username }}</span>
+                        {% if m.nickname %}<span class="member-nick">{{ m.nickname }}</span>{% endif %}
+                        {% if m.is_admin %}<span class="role-badge small">admin</span>{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                {% if is_admin %}
+                <form method="post" action="{{ url_for('invite_to_workspace', workspace_id=workspace.workspace_id) }}" class="inline-form">
+                    <div class="field-inline">
+                        <input type="text" name="username" placeholder="invite by username" required>
+                        <button type="submit" class="btn-secondary">invite</button>
+                    </div>
+                </form>
+                <div class="panel-title" style="margin-top:1rem">make admin</div>
+                <form method="post" action="{{ url_for('grant_admin', workspace_id=workspace.workspace_id) }}" class="inline-form">
+                    <div class="field-inline">
+                        <input type="text" name="username" placeholder="member username" required>
+                        <button type="submit" class="btn-secondary">grant admin</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Quick info panel -->
+            <div class="panel">
+                <div class="panel-title">workspace info</div>
+                <dl class="info-list">
+                    <dt>created</dt>
+                    <dd>{{ workspace.created_at.strftime('%b %d, %Y') if workspace.created_at else '—' }}</dd>
+                    <dt>channels</dt>
+                    <dd>{{ channels | length }}</dd>
+                </dl>
+                <a href="{{ url_for('search') }}?workspace={{ workspace.workspace_id }}" class="btn-ghost small">search messages</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Workspaces — Snickr{% endblock %}
+{% block content %}
+<div class="page-wrap">
+    <div class="page-header">
+        <h1>your workspaces</h1>
+        <a href="{{ url_for('create_workspace') }}" class="btn-primary">+ new workspace</a>
+    </div>
+
+    {% if workspaces %}
+    <div class="ws-grid">
+        {% for ws in workspaces %}
+        <a href="{{ url_for('workspace_detail', workspace_id=ws.workspace_id) }}" class="ws-card">
+            <div class="ws-card-name">{{ ws.name }}</div>
+            {% if ws.description %}
+            <div class="ws-card-desc">{{ ws.description }}</div>
+            {% endif %}
+            <div class="ws-card-meta">
+                created by {{ ws.creator_username }}
+                {% if ws.is_admin %}<span class="role-badge">admin</span>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>You're not in any workspaces yet.</p>
+        <a href="{{ url_for('create_workspace') }}" class="btn-primary">create one</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

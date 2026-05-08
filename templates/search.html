@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Search — Snickr{% endblock %}
+{% block content %}
+<div class="page-wrap">
+    <div class="page-header">
+        <h1>search messages</h1>
+    </div>
+
+    <form method="get" action="{{ url_for('search') }}" class="search-form">
+        <div class="search-bar">
+            <input type="text" name="q" value="{{ keyword }}" placeholder="search across all accessible messages…" autofocus>
+            <button type="submit" class="btn-primary">search</button>
+        </div>
+    </form>
+
+    {% if keyword %}
+    <div class="search-meta">
+        {% if results %}
+        {{ results | length }} result{% if results | length != 1 %}s{% endif %} for <em>{{ keyword }}</em>
+        {% else %}
+        no results for <em>{{ keyword }}</em>
+        {% endif %}
+    </div>
+
+    {% if results %}
+    <div class="search-results">
+        {% for r in results %}
+        <a href="{{ url_for('channel_detail', channel_id=r.channel_id) }}" class="search-result">
+            <div class="sr-top">
+                <span class="sr-channel">#{{ r.channel_name }}</span>
+                <span class="sr-workspace">{{ r.workspace_name }}</span>
+                <span class="sr-time">{{ r.posted_at.strftime('%b %d, %Y') if r.posted_at else '' }}</span>
+            </div>
+            <div class="sr-body">{{ r.body }}</div>
+            <div class="sr-author">— {{ r.sender_username }}</div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

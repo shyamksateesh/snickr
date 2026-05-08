@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Invitations — Snickr{% endblock %}
+{% block content %}
+<div class="page-wrap">
+    <div class="page-header">
+        <h1>invitations</h1>
+    </div>
+
+    {% if not workspace_invitations and not channel_invitations %}
+    <div class="empty-state">
+        <p>No pending invitations.</p>
+        <a href="{{ url_for('workspaces') }}" class="btn-ghost">back to workspaces</a>
+    </div>
+    {% endif %}
+
+    {% if workspace_invitations %}
+    <section class="inv-section">
+        <h2>workspace invitations</h2>
+        {% for inv in workspace_invitations %}
+        <div class="inv-card">
+            <div class="inv-info">
+                <strong>{{ inv.workspace_name }}</strong>
+                <span class="inv-meta">invited by {{ inv.inviter_username }} · {{ inv.invited_at.strftime('%b %d') if inv.invited_at else '' }}</span>
+            </div>
+            <div class="inv-actions">
+                <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=inv.invitation_id) }}" style="display:inline">
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn-primary small">accept</button>
+                </form>
+                <form method="post" action="{{ url_for('respond_workspace_invitation', invitation_id=inv.invitation_id) }}" style="display:inline">
+                    <input type="hidden" name="action" value="decline">
+                    <button type="submit" class="btn-ghost small">decline</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if channel_invitations %}
+    <section class="inv-section">
+        <h2>channel invitations</h2>
+        {% for inv in channel_invitations %}
+        <div class="inv-card">
+            <div class="inv-info">
+                <strong>#{{ inv.channel_name }}</strong>
+                <span class="muted-text">in {{ inv.workspace_name }}</span>
+                <span class="inv-meta">invited by {{ inv.inviter_username }} · {{ inv.invited_at.strftime('%b %d') if inv.invited_at else '' }}</span>
+            </div>
+            <div class="inv-actions">
+                <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=inv.invitation_id) }}" style="display:inline">
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn-primary small">accept</button>
+                </form>
+                <form method="post" action="{{ url_for('respond_channel_invitation', invitation_id=inv.invitation_id) }}" style="display:inline">
+                    <input type="hidden" name="action" value="decline">
+                    <button type="submit" class="btn-ghost small">decline</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

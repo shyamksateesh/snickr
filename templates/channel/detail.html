@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}#{{ channel.name }} — Snickr{% endblock %}
+{% block content %}
+<div class="ch-layout">
+
+    <!-- Sidebar: back to workspace + members -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('workspace_detail', workspace_id=workspace.workspace_id) }}" class="sidebar-ws-name sidebar-back">
+                ← {{ workspace.name }}
+            </a>
+        </div>
+        <div class="sidebar-section-label">
+            {% if channel.channel_type == 'public' %}#{% elif channel.channel_type == 'private' %}🔒{% else %}@{% endif %}
+            {{ channel.name }}
+        </div>
+        <div class="ch-type-badge">{{ channel.channel_type }}</div>
+
+        <div class="sidebar-section-label" style="margin-top:1.5rem">members</div>
+        <ul class="member-list compact">
+            {% for m in members %}
+            <li class="member-item">
+                <span class="member-name">{{ m.username }}</span>
+                {% if m.nickname %}<span class="member-nick">{{ m.nickname }}</span>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% if is_member and channel.channel_type != 'direct' %}
+        <div class="sidebar-actions">
+            <div class="panel-title small">invite to channel</div>
+            <form method="post" action="{{ url_for('invite_to_channel', channel_id=channel.channel_id) }}">
+                <div class="field-inline vertical">
+                    <input type="text" name="username" placeholder="username" required>
+                    <button type="submit" class="btn-secondary small">invite</button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </aside>
+
+    <!-- Main: messages -->
+    <div class="ch-main">
+        <div class="ch-header">
+            <div class="ch-title">
+                {% if channel.channel_type == 'public' %}#{% elif channel.channel_type == 'private' %}🔒{% else %}@{% endif %}
+                {{ channel.name }}
+            </div>
+            <div class="ch-meta">{{ channel.channel_type }} · {{ messages | length }} message{% if messages | length != 1 %}s{% endif %}</div>
+        </div>
+
+        {% if not is_member %}
+        <div class="join-banner">
+            <p>You're not a member of this channel yet.</p>
+            {% if channel.channel_type == 'public' %}
+            <form method="post" action="{{ url_for('join_channel', channel_id=channel.channel_id) }}">
+                <button type="submit" class="btn-primary">join #{{ channel.name }}</button>
+            </form>
+            {% else %}
+            <p class="muted-text">Ask a member to invite you.</p>
+            {% endif %}
+        </div>
+        {% else %}
+
+        <div class="messages-wrap" id="messages">
+            {% if messages %}
+            {% for msg in messages %}
+            <div class="message {% if msg.username == user.username %}message-own{% endif %}">
+                <div class="msg-meta">
+                    <span class="msg-author">{{ msg.nickname or msg.username }}</span>
+                    <span class="msg-time">{{ msg.posted_at.strftime('%b %d, %H:%M') if msg.posted_at else '' }}</span>
+                </div>
+                <div class="msg-body">{{ msg.body }}</div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">no messages yet — say something!</div>
+            {% endif %}
+        </div>
+
+        <div class="compose-wrap">
+            <form method="post" action="{{ url_for('post_message', channel_id=channel.channel_id) }}" class="compose-form">
+                <textarea name="body" placeholder="message #{{ channel.name }}" rows="2" required
+                    onkeydown="submitOnEnter(event, this)"></textarea>
+                <button type="submit" class="btn-primary">send</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Scroll messages to bottom on load
+const msgs = document.getElementById('messages');
+if (msgs) msgs.scrollTop = msgs.scrollHeight;
+
+// Submit on Enter (Shift+Enter for newline)
+function submitOnEnter(e, el) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        el.closest('form').submit();
+    }
+}
+</script>
+{% endblock %}

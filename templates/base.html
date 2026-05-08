@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Snickr{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="topnav">
+        <a href="{{ url_for('workspaces') }}" class="brand">snickr</a>
+        {% if session.get('user_id') %}
+        <div class="nav-links">
+            <a href="{{ url_for('search') }}">search</a>
+            <a href="{{ url_for('invitations') }}" class="inv-link">
+                invitations
+                {% set ws_count = pending_workspace_count|default(0) %}
+                {% set ch_count = pending_channel_count|default(0) %}
+                {% if ws_count + ch_count > 0 %}
+                <span class="badge">{{ ws_count + ch_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ url_for('logout') }}" class="logout">log out</a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

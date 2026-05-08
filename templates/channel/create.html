@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}New Channel — Snickr{% endblock %}
+{% block content %}
+<div class="page-wrap narrow">
+    <a href="{{ url_for('workspace_detail', workspace_id=workspace.workspace_id) }}" class="back-link">← {{ workspace.name }}</a>
+    <h1>create channel</h1>
+    <form method="post" id="create-ch-form">
+        <div class="field">
+            <label for="name">channel name</label>
+            <input type="text" id="name" name="name" maxlength="100" autofocus required placeholder="e.g. general">
+        </div>
+        <div class="field">
+            <label>channel type</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="channel_type" value="public" checked onchange="toggleDirect(this)">
+                    <span class="radio-text">
+                        <strong>public</strong>
+                        <span>anyone in the workspace can join</span>
+                    </span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="channel_type" value="private" onchange="toggleDirect(this)">
+                    <span class="radio-text">
+                        <strong>private</strong>
+                        <span>invite-only channel</span>
+                    </span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="channel_type" value="direct" onchange="toggleDirect(this)">
+                    <span class="radio-text">
+                        <strong>direct</strong>
+                        <span>private conversation between two people</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+        <div class="field" id="direct-user-field" style="display:none">
+            <label for="direct_user">other person's username</label>
+            <input type="text" id="direct_user" name="direct_user" maxlength="50">
+        </div>
+        <button type="submit" class="btn-primary">create channel</button>
+    </form>
+</div>
+<script>
+function toggleDirect(radio) {
+    document.getElementById('direct-user-field').style.display =
+        radio.value === 'direct' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

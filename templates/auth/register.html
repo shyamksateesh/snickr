@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — Snickr{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1>sign up</h1>
+        <p class="auth-sub">create your snickr account</p>
+        <form method="post" action="{{ url_for('register') }}">
+            <div class="field">
+                <label for="email">email</label>
+                <input type="email" id="email" name="email" autocomplete="email" autofocus required>
+            </div>
+            <div class="field">
+                <label for="username">username</label>
+                <input type="text" id="username" name="username" autocomplete="username" required maxlength="50">
+            </div>
+            <div class="field">
+                <label for="nickname">display name <span class="optional">(optional)</span></label>
+                <input type="text" id="nickname" name="nickname" maxlength="50">
+            </div>
+            <div class="field">
+                <label for="password">password</label>
+                <input type="password" id="password" name="password" autocomplete="new-password" required>
+            </div>
+            <button type="submit" class="btn-primary">create account</button>
+        </form>
+        <p class="auth-switch">have an account? <a href="{{ url_for('login') }}">log in</a></p>
+    </div>
+</div>
+{% endblock %}
