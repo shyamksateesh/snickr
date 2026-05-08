@@ -11,11 +11,15 @@
 
 Built as the semester project for **CS 6083 — Principles of Database Systems** at NYU Tandon, Spring 2026. Covers the full stack from ER diagram and relational schema design through to a working web application with security, transactions, and access control.
 
+[📄 Full Report](final-report.pdf) | [🚀 Try It Out](https://snickr-production.up.railway.app)
+
 ---
 
 ## Try It Out
 
 > 🚀 **[Live Demo → snickr-production.up.railway.app](https://snickr-production.up.railway.app)**
+
+Use these credentials to explore without registering:
 
 | Username | Password | Role |
 |---|---|---|
@@ -124,6 +128,8 @@ snickr/
 ├── db.py               # All database queries and transactions
 ├── requirements.txt
 ├── seed.sql            # Realistic sample data for demo
+├── schema.sql          # Full DDL for deployment
+├── final-report.pdf    # Complete project report (Projects 1 + 2)
 ├── .env                # Local environment config (git-ignored)
 ├── .env.example        # Template — copy this to .env
 ├── .gitignore
